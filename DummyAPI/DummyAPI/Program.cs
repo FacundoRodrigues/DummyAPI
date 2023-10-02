@@ -2,11 +2,27 @@ using DummyAPI.Context;
 using DummyAPI.Model;
 using Microsoft.EntityFrameworkCore;
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
 builder.Services.AddDbContext<BookDb>(opt => opt.UseInMemoryDatabase("BookList"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 var app = builder.Build();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.MapGet("/Bookitems", async (BookDb db) =>
     await db.Books.ToListAsync());
