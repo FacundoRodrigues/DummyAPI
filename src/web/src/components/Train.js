@@ -45,7 +45,7 @@ export const Train = () => {
 	}
 
 	const handleHook = () => {
-		if(value === '')
+		if(value === '' || value.carriage === '')
 		{
 			setError('Input vacio')
 			return
@@ -78,9 +78,7 @@ export const Train = () => {
 	}
 
 	const handleUnhook = () => {
-
 		const directionToSend = isCheckedRight ? DIRECTIONS.Right : DIRECTIONS.Left
-		const { carriage } = value
 
 		try {
 			fetch(URLS_API.UNHOOK_URL, {
@@ -90,7 +88,6 @@ export const Train = () => {
 					'Content-Type': 'application/json',
 				},
 				body: JSON.stringify({
-					value: carriage,
 					direction: directionToSend,
 				}),
 			})
