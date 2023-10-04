@@ -24,15 +24,15 @@ namespace Exam.Controllers
         }
 
         [HttpPut("hook")]
-        public List<int> Hook([FromBody] CarriageRequest request)
+        public Train Hook([FromBody] CarriageRequest request)
         {
-            return _trainService.Hook(request.Value, request.Direction).Carriage;
+            return _trainService.Hook(request.Value, request.Direction);
         }
 
         [HttpPut("unhook")]
-        public List<int> Unhook([FromBody] CarriageRequest request)
+        public Train Unhook([FromBody] CarriageRequest request)
         {
-            return _trainService.Unhook(request.Direction).Carriage;
+            return _trainService.Unhook(request.Direction);
         }
     }
 }
