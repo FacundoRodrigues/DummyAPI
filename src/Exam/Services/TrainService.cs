@@ -14,7 +14,7 @@ namespace Exam.Services
             };
         }
 
-        public Train Hook(int value, Direction direction)
+        public async Task<Train> Hook(int value, Direction direction)
         {
             if (direction == Direction.Left) //Izq = principio | Der = fin
             {
@@ -28,7 +28,7 @@ namespace Exam.Services
             return _train;
         }
 
-        public Train Unhook(Direction direction)
+        public async Task<Train> Unhook(Direction direction)
         {
             var firstIndex = 0;
             var lastIndex = _train.Carriage.Count - 1;
@@ -40,7 +40,7 @@ namespace Exam.Services
             return _train;
         }
 
-        public Train Get()
+        public async Task<Train> Get()
         {
             return _train;
         }

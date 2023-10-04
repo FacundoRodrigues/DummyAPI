@@ -1,3 +1,4 @@
+using Exam.Middleware;
 using Exam.Services;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -39,5 +40,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseGlobalExceptionMiddleware();
 
 app.Run();

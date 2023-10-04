@@ -34,10 +34,7 @@ export const Train = () => {
 		e.preventDefault()
 
 		const directionToSend = direction == DIRECTIONS.Right ? DIRECTIONS.Right : DIRECTIONS.Left
-		const { carriage } = value 
-		console.log(carriage)
-		console.log(direction)
-		console.log(directionToSend)
+		const { carriage } = value
 
 		try {
 			fetch(URLS_API.HOOK_URL, {
@@ -62,10 +59,7 @@ export const Train = () => {
 		e.preventDefault()
 
 		const directionToSend = direction == DIRECTIONS.Right ? DIRECTIONS.Right : DIRECTIONS.Left
-		const { carriage } = value 
-		console.log(carriage)
-		console.log(direction)
-		console.log(directionToSend)
+		const { carriage } = value
 
 		try {
 			fetch(URLS_API.UNHOOK_URL, {
