@@ -18,21 +18,21 @@ namespace Exam.Controllers
         }
 
         [HttpGet]
-        public async Task<Train> Get()
+        public Train Get()
         {
-            return await _trainService.Get();
+            return _trainService.Get();
         }
 
         [HttpPut("hook")]
-        public async Task<Train> Hook([FromBody] CarriageRequest request)
+        public Train Hook([FromBody] CarriageRequest request)
         {
-            return await _trainService.Hook(request.Value, request.Direction);
+            return _trainService.Hook(request.Value, request.Direction);
         }
 
         [HttpPut("unhook")]
-        public async Task<Train> Unhook([FromBody] CarriageRequest request)
+        public Train Unhook([FromBody] CarriageRequest request)
         {
-            return await _trainService.Unhook(request.Direction);
+            return _trainService.Unhook(request.Direction);
         }
     }
 }

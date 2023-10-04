@@ -13,8 +13,9 @@ const ACTION = {
 
 export const Train = () => {
 	const [train, setTrain] = useState([])
-	const [direction, setDirection] = useState('')
 	const [value, setValue] = useState('')
+	const [isCheckedLeft, setIsCheckedLeft] = useState(false)
+	const [isCheckedRight, setIsCheckedRight] = useState(false)
 
 	useEffect( () => {
 		fetch(URLS_API.GET_URL)
@@ -24,6 +25,16 @@ export const Train = () => {
 
 	const { carriage } = train
 
+	const handleChangeLeft = () => {
+		setIsCheckedLeft(!isCheckedLeft)
+		if (isCheckedRight) setIsCheckedRight(!isCheckedRight)
+	}
+
+	const handleChangeRight = () => {
+		setIsCheckedRight(!isCheckedRight)
+		if (isCheckedLeft) setIsCheckedLeft(!isCheckedLeft)
+	}
+
 	const handleInputChange = ({ target }) => {
 		setValue({
 			[target.name] : target.value
@@ -32,9 +43,11 @@ export const Train = () => {
 
 	const handleHook = (e) => {
 		e.preventDefault()
-
-		const directionToSend = direction == DIRECTIONS.Right ? DIRECTIONS.Right : DIRECTIONS.Left
+		const directionToSend = isCheckedRight ? DIRECTIONS.Right : DIRECTIONS.Left
 		const { carriage } = value
+
+		console.log(directionToSend)
+		console.log(value)
 
 		try {
 			fetch(URLS_API.HOOK_URL, {
@@ -58,7 +71,9 @@ export const Train = () => {
 	const handleUnhook = (e) => {
 		e.preventDefault()
 
-		const directionToSend = direction == DIRECTIONS.Right ? DIRECTIONS.Right : DIRECTIONS.Left
+		console.log(isCheckedRight)
+		const directionToSend = isCheckedRight ? DIRECTIONS.Right : DIRECTIONS.Left
+		console.log(directionToSend)
 		const { carriage } = value
 
 		try {
@@ -95,10 +110,20 @@ export const Train = () => {
 
 			<div>
 				<div>
-					<input onClick={() => setDirection(DIRECTIONS.Right)} name='right' type='checkbox' /> Derecha
+					<input
+						onChange={ handleChangeRight } 
+						name='right' 
+						type='checkbox'
+						checked={isCheckedRight} 
+					/> Derecha
 				</div>
 				<div>
-					<input onClick={() => setDirection(DIRECTIONS.Left)} name='left' type='checkbox' /> Izquierda
+					<input 
+						onChange={ handleChangeLeft } 
+						name='left' 
+						type='checkbox'
+						checked={isCheckedLeft}
+					/> Izquierda
 				</div>
 			</div>
 
