@@ -14,8 +14,9 @@ const ACTION = {
 export const Train = () => {
 	const [train, setTrain] = useState([])
 	const [value, setValue] = useState('')
-	const [isCheckedLeft, setIsCheckedLeft] = useState(false)
+	const [isCheckedLeft, setIsCheckedLeft] = useState(true)
 	const [isCheckedRight, setIsCheckedRight] = useState(false)
+	const [error, setError] = useState('')
 
 	useEffect( () => {
 		fetch(URLS_API.GET_URL)
@@ -36,18 +37,22 @@ export const Train = () => {
 	}
 
 	const handleInputChange = ({ target }) => {
+		if(!target.validity.valid) return
+
 		setValue({
 			[target.name] : target.value
 		})
 	}
 
-	const handleHook = (e) => {
-		e.preventDefault()
+	const handleHook = () => {
+		if(value === '')
+		{
+			setError('Input vacio')
+			return
+		}
+
 		const directionToSend = isCheckedRight ? DIRECTIONS.Right : DIRECTIONS.Left
 		const { carriage } = value
-
-		console.log(directionToSend)
-		console.log(value)
 
 		try {
 			fetch(URLS_API.HOOK_URL, {
@@ -62,18 +67,19 @@ export const Train = () => {
 				}),
 			})
 				.then((response) => response.json())
-				.then((data) => setTrain(data))
+				.then((data) => {
+					setTrain(data)
+					setError('')
+				})
+				.catch((err) => setError(err.message))
 		} catch (err) {
-			console.log(err)
+			setError(err)
 		}
 	}
 
-	const handleUnhook = (e) => {
-		e.preventDefault()
+	const handleUnhook = () => {
 
-		console.log(isCheckedRight)
 		const directionToSend = isCheckedRight ? DIRECTIONS.Right : DIRECTIONS.Left
-		console.log(directionToSend)
 		const { carriage } = value
 
 		try {
@@ -89,9 +95,13 @@ export const Train = () => {
 				}),
 			})
 				.then((response) => response.json())
-				.then((data) => setTrain(data))
+				.then((data) => {
+					setTrain(data)
+					setError('')
+				})
+				.catch((err) => setError(err.message))
 		} catch (err) {
-			console.log(err)
+			setError(err)
 		}
 	}
 
@@ -99,24 +109,22 @@ export const Train = () => {
 		<>
 			<h1>Mi tren</h1>
 			<hr />
-			{JSON.stringify(carriage)}
+
+			<header>
+				<strong>{JSON.stringify(carriage)}</strong>
+			</header>
+			
 			
 			<input
 				type='text'
 				onChange={ handleInputChange }
 				name='carriage'
 				placeholder='Valor del vagón'
+				pattern="[0-9]*"
+				autoComplete='off'
 			/>
 
 			<div>
-				<div>
-					<input
-						onChange={ handleChangeRight } 
-						name='right' 
-						type='checkbox'
-						checked={isCheckedRight} 
-					/> Derecha
-				</div>
 				<div>
 					<input 
 						onChange={ handleChangeLeft } 
@@ -125,10 +133,21 @@ export const Train = () => {
 						checked={isCheckedLeft}
 					/> Izquierda
 				</div>
+				<div>
+					<input
+						onChange={ handleChangeRight } 
+						name='right' 
+						type='checkbox'
+						checked={isCheckedRight} 
+					/> Derecha
+				</div>
 			</div>
 
 			<button onClick={ handleHook }> {ACTION.Hook} </button>
 			<button onClick={ handleUnhook }> {ACTION.Unhook} </button>
+
+			
+			{!!error && <p style={{color:'red'}}>{error}</p>}
 		</>
 	)
 }
