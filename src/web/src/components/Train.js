@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { URLS_API } from './Urls'
+import { URLS_API } from '../Urls/Urls'
+import { getTrain } from '../helpers/GetTrain'
 
 const DIRECTIONS = {
 	Left: 0,
@@ -11,20 +12,26 @@ const ACTION = {
 	Unhook: 'Desenganchar'
 }
 
+const PORT = '44318'
+const GET_URL = `https://localhost:${PORT}/api/Train`
+
 export const Train = () => {
-	const [train, setTrain] = useState([])
+	const [ train, setTrain] = useState([])
 	const [value, setValue] = useState('')
 	const [isCheckedLeft, setIsCheckedLeft] = useState(true)
 	const [isCheckedRight, setIsCheckedRight] = useState(false)
-	const [error, setError] = useState('')
+	const [ error, setError] = useState('')
 
 	useEffect( () => {
-		fetch(URLS_API.GET_URL)
-			.then(res => res.json())
-			.then(data => setTrain(data))
+		getTrain(GET_URL)
+			.then(response => {
+				if(response.success) setTrain(response.data)
+				else setError(response.data)
+			})
 	},[])
 
 	const { carriage } = train
+
 
 	const handleChangeLeft = () => {
 		setIsCheckedLeft(!isCheckedLeft)
@@ -68,6 +75,7 @@ export const Train = () => {
 			})
 				.then((response) => response.json())
 				.then((data) => {
+					console.log(data)
 					setTrain(data)
 					setError('')
 				})
