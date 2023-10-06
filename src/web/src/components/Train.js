@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { URLS_API } from '../Urls/Urls'
-import { getTrain } from '../helpers/GetTrain'
+import { getTrain } from '../helpers/getTrain'
+import { hookCarriage } from '../helpers/hookCarriage'
+import { unhookCarriage } from '../helpers/unhookCarriage'
 
 const DIRECTIONS = {
 	Left: 0,
@@ -14,6 +15,8 @@ const ACTION = {
 
 const PORT = '44318'
 const GET_URL = `https://localhost:${PORT}/api/Train`
+const HOOK_URL = `https://localhost:${PORT}/api/train/hook`
+const UNHOOK_URL = `https://localhost:${PORT}/api/train/unhook`
 
 export const Train = () => {
 	const [ train, setTrain] = useState([])
@@ -57,57 +60,38 @@ export const Train = () => {
 			setError('Input vacio')
 			return
 		}
-
-		const directionToSend = isCheckedRight ? DIRECTIONS.Right : DIRECTIONS.Left
 		const { carriage } = value
 
-		try {
-			fetch(URLS_API.HOOK_URL, {
-				method: 'PUT',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					value: carriage,
-					direction: directionToSend,
-				}),
-			})
-				.then((response) => response.json())
-				.then((data) => {
-					console.log(data)
-					setTrain(data)
-					setError('')
-				})
-				.catch((err) => setError(err.message))
-		} catch (err) {
-			setError(err)
+		const body = {
+			carriage: carriage,
+			directionToSend: isCheckedRight ? DIRECTIONS.Right : DIRECTIONS.Left
 		}
+
+		hookCarriage( HOOK_URL, { body })
+			.then(response => {
+				if(response.success){
+					setTrain(response.data)
+					setError('')
+				}
+				else{
+					setError(response.data)
+				}
+			})
 	}
 
 	const handleUnhook = () => {
 		const directionToSend = isCheckedRight ? DIRECTIONS.Right : DIRECTIONS.Left
 
-		try {
-			fetch(URLS_API.UNHOOK_URL, {
-				method: 'PUT',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					direction: directionToSend,
-				}),
-			})
-				.then((response) => response.json())
-				.then((data) => {
-					setTrain(data)
+		unhookCarriage( UNHOOK_URL, { directionToSend })
+			.then(response => {
+				if(response.success){
+					setTrain(response.data)
 					setError('')
-				})
-				.catch((err) => setError(err.message))
-		} catch (err) {
-			setError(err)
-		}
+				}
+				else{
+					setError(response.data)
+				}
+			})
 	}
 
 	return (
